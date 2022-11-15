@@ -1,16 +1,12 @@
 package com.timgt.battleship
 
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.test.TestDispatcher
-import kotlinx.coroutines.test.UnconfinedTestDispatcher
-import kotlinx.coroutines.test.resetMain
+import app.cash.turbine.test
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.test.runTest
-import kotlinx.coroutines.test.setMain
 import org.junit.Assert.assertEquals
 import org.junit.Rule
 import org.junit.Test
-import org.junit.rules.TestWatcher
-import org.junit.runner.Description
 
 class MainViewModelTest {
 
@@ -18,24 +14,144 @@ class MainViewModelTest {
     val mainDispatcherRule = MainDispatcherRule()
 
     @Test
-    fun `test`() = runTest {
-        val viewModel = MainViewModel()
+    fun `find opponent`() = runTest {
+        val battleshipClient = FakeBattleshipClient()
+        val viewModel = MainViewModel(battleshipClient)
+        val gameState = GameState(
+            stage = Stage.Setup,
+            myBoard = emptyBoard
+        )
 
-        viewModel.findOpponentClicked()
-
-        assertEquals(mainState(isLoading = true), viewModel.uiState.value)
+        viewModel.uiState.test {
+            viewModel.findOpponentClicked()
+            assertEquals(mainState(isLoading = false), awaitItem())
+            assertEquals(mainState(isLoading = true), awaitItem())
+            assertEquals(mainState(isLoading = false, gameState = gameState), awaitItem())
+            ensureAllEventsConsumed()
+        }
     }
 }
 
-private fun mainState(isLoading: Boolean = false) = MainState(isLoading = isLoading)
+class FakeBattleshipClient : BattleshipClient {
 
-class MainDispatcherRule(private val testDispatcher: TestDispatcher = UnconfinedTestDispatcher()) : TestWatcher() {
+    private val _messages = MutableSharedFlow<GameState>()
+    override val messages: SharedFlow<GameState> = _messages
 
-    override fun starting(description: Description) {
-        Dispatchers.setMain(testDispatcher)
+    override suspend fun findOpponent() {
+        val gameState = GameState(
+            stage = Stage.Setup,
+            myBoard = emptyBoard
+        )
+       _messages.emit(gameState)
     }
 
-    override fun finished(description: Description) {
-        Dispatchers.resetMain()
+    override suspend fun sendMessage(message: String) {
+
     }
 }
+
+private fun mainState(isLoading: Boolean = false, gameState: GameState? = null) =
+    MainState(isLoading = isLoading, gameState = gameState)
+
+val emptyBoard = listOf(
+    Cell(),
+    Cell(),
+    Cell(),
+    Cell(),
+    Cell(),
+    Cell(),
+    Cell(),
+    Cell(),
+    Cell(),
+    Cell(),
+    Cell(),
+    Cell(),
+    Cell(),
+    Cell(),
+    Cell(),
+    Cell(),
+    Cell(),
+    Cell(),
+    Cell(),
+    Cell(),
+    Cell(),
+    Cell(),
+    Cell(),
+    Cell(),
+    Cell(),
+    Cell(),
+    Cell(),
+    Cell(),
+    Cell(),
+    Cell(),
+    Cell(),
+    Cell(),
+    Cell(),
+    Cell(),
+    Cell(),
+    Cell(),
+    Cell(),
+    Cell(),
+    Cell(),
+    Cell(),
+    Cell(),
+    Cell(),
+    Cell(),
+    Cell(),
+    Cell(),
+    Cell(),
+    Cell(),
+    Cell(),
+    Cell(),
+    Cell(),
+    Cell(),
+    Cell(),
+    Cell(),
+    Cell(),
+    Cell(),
+    Cell(),
+    Cell(),
+    Cell(),
+    Cell(),
+    Cell(),
+    Cell(),
+    Cell(),
+    Cell(),
+    Cell(),
+    Cell(),
+    Cell(),
+    Cell(),
+    Cell(),
+    Cell(),
+    Cell(),
+    Cell(),
+    Cell(),
+    Cell(),
+    Cell(),
+    Cell(),
+    Cell(),
+    Cell(),
+    Cell(),
+    Cell(),
+    Cell(),
+    Cell(),
+    Cell(),
+    Cell(),
+    Cell(),
+    Cell(),
+    Cell(),
+    Cell(),
+    Cell(),
+    Cell(),
+    Cell(),
+    Cell(),
+    Cell(),
+    Cell(),
+    Cell(),
+    Cell(),
+    Cell(),
+    Cell(),
+    Cell(),
+    Cell(),
+    Cell(),
+)

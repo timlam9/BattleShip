@@ -1,16 +1,17 @@
 plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
+    id 'kotlinx-serialization'
 }
 
 android {
     namespace 'com.timgt.battleship'
-    compileSdk 32
+    compileSdk 33
 
     defaultConfig {
         applicationId "com.timgt.battleship"
         minSdk 26
-        targetSdk 32
+        targetSdk 33
         versionCode 1
         versionName "1.0"
 
@@ -64,4 +65,9 @@ dependencies {
 
 
     testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:$coroutines_version"
+    testImplementation 'app.cash.turbine:turbine:0.12.1'
+
+    // WebSocket
+    implementation 'com.squareup.okhttp3:okhttp:4.10.0'
+    implementation "org.jetbrains.kotlinx:kotlinx-serialization-json:1.4.0"
 }
