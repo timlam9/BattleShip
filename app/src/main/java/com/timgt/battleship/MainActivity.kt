@@ -16,15 +16,13 @@ import com.timgt.battleship.ui.theme.BattleShipTheme
 
 class MainActivity : ComponentActivity() {
 
-    val viewModel = MainViewModel()
+    private val viewModel = MainViewModel()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
             BattleShipTheme {
-                // A surface container using the 'background' color from the theme
                 Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
-                    Greeting("Android")
                     Button(onClick = {
                         viewModel.findOpponentClicked()
                     }) {
@@ -33,18 +31,5 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
-    }
-}
-
-@Composable
-fun Greeting(name: String) {
-    Text(text = "Hello $name!")
-}
-
-@Preview(showBackground = true)
-@Composable
-fun DefaultPreview() {
-    BattleShipTheme {
-        Greeting("Android")
     }
 }
