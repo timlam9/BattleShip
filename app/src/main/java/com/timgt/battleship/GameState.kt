@@ -1,14 +1,15 @@
 package com.timgt.battleship
 
 import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
-@kotlinx.serialization.Serializable
+@Serializable
 data class GameState(
     val stage: Stage,
     val myBoard: Board
 )
 
-@kotlinx.serialization.Serializable
+@Serializable
 @SerialName("stage")
 enum class Stage {
 
@@ -25,13 +26,13 @@ enum class Stage {
 
 typealias Board = List<Cell>
 
-@kotlinx.serialization.Serializable
+@Serializable
 data class Cell(
     val ship: Ship? = null,
     val isHit: Boolean = false
 )
 
-@kotlinx.serialization.Serializable
+@Serializable
 enum class Ship(val size: Int) {
 
     Destroyer(2),
